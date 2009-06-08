@@ -18,9 +18,9 @@
 -- of the values that they contain are not available yet.
 --
 -- 'PVar's are implemented with a lazy thunk that reads from an
--- 'IORef'; before the 'IORef' is written to, it contains _|_ ( in the
--- form of an exception with a descriptive error message) so that an
--- error is raised in the user code if the variable is accidently
+-- 'IORef'; before the 'IORef' is written to, it contains @_|_@ ( in
+-- the form of an exception with a descriptive error message) so that
+-- an error is raised in the user code if the variable is accidently
 -- accessed before the value is ready.
 --
 -- NOTE: 'PVar's are modeled closely on the 'IVar' implementation in the
@@ -39,7 +39,8 @@
 module Data.PVar
     (
     -- * PVar creation
-      newPVar
+      PVar
+    , newPVar
     , newPVarWithCustomMessage
     -- * Writing to PVars
     , writePVar
@@ -57,20 +58,22 @@ import Data.IORef
 import Data.Typeable
 import System.IO.Unsafe
 
--- |A procrastinating variable ('PVar' for short)
+-- |A procrastinating variable ('PVar' for short).
 data PVar a = PVar !(MVar ()) !(IORef a)
 
 -- |The exception raised when a 'PVar' is accessed before it is ready.
 data AccessedTooEarly = AccessedTooEarly String deriving (Show, Typeable)
 instance Exception AccessedTooEarly
 
--- |The exception raised when one attempts to write to a 'PVar'
+-- |The exception raised by 'writePVar' when one attempts to write to a 'PVar'
 --  after it has already been given a value.
 data AlreadyHasAValue = AlreadyHasAValue deriving (Show, Typeable)
 instance Exception AlreadyHasAValue
 
 -- |Creates a new, empty 'PVar', and returns both a reference you can
---  use to fill the value later as well as
+--  use to fill the value later as well as a lazy thunk which you can
+--  treat as a normal variable;  the latter evaluates to the value
+--  stored in the reference if it is available and to bottom otherwise.
 newPVar :: IO (PVar a, a)
 newPVar = newPVarWithCustomMessage "This procrastinating variable was accessed before it was ready."
 
@@ -86,8 +89,9 @@ newPVarWithCustomMessage message = do
         value = unsafePerformIO $ readIORef ref
     return (PVar lock ref,value)
 
--- |Try to read a procrastinating variable. Returns 'Nothing' if the
--- value is not ready yet.
+-- |Tries to read a 'PVar', but does not throw an exception if
+-- the value is not ready yet;  instead, if the value is ready it
+-- returns @Just value@ and otherwise it returns @Nothing@.
 tryReadPVar :: PVar a -> IO (Maybe a)
 tryReadPVar (PVar lock ref) = block $ do
     is_empty <- isEmptyMVar lock
@@ -95,14 +99,15 @@ tryReadPVar (PVar lock ref) = block $ do
         then readIORef ref >>= return . Just
          else return Nothing
 
--- |Writes a value to a 'PVar'.  Raises a 'IVar'. Raises a
---  'AlreadyHasAValue' exception if the 'PVar' already has a value.
+-- |Writes a value to a 'PVar'. Raises an 'AlreadyHasAValue' exception
+-- if the 'PVar' already has a value.
 writePVar :: PVar a -> a -> IO ()
 writePVar pvar value = do
     result <- tryWritePVar pvar value
     unless result $ throwIO AlreadyHasAValue
 
--- |Writes a value to a 'PVar'. Returns 'True' if successful.
+-- |Attempts to a value to a 'PVar', but instead of throwing an exception
+-- it returns 'True' if it was successful and 'False' otherwise.
 tryWritePVar :: PVar a -> a -> IO Bool
 tryWritePVar (PVar lock ref) value = block $ do
     a <- tryTakeMVar lock

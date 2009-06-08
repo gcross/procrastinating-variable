@@ -19,3 +19,6 @@ dist/doc/html/procrastinating-variable/minus.gif
 dist/doc/html/procrastinating-variable/plus.gif
 dist/doc/html/procrastinating-variable/procrastinating-variable.haddock
 dist/procrastinating-variable-1.0.tar.gz
+dist/build/HSprocrastinating-variable-1.0.1.o
+dist/build/libHSprocrastinating-variable-1.0.1.a
+dist/procrastinating-variable-1.0.1.tar.gz

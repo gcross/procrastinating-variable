@@ -1,6 +1,6 @@
 Name:           procrastinating-variable
 Synopsis:       Haskell values that cannot be evaluated immediately.
-Version:        1.0.1
+Version:        1.0.2
 Category:       Data
 Cabal-Version:  >= 1.2
 License:        BSD3
@@ -20,7 +20,7 @@ Description:    Procrastinating variables ('PVar's) are meant to be used in case
                 of the values that they contain are not available yet.
                 .
                 'PVar's are implemented with a lazy thunk that reads from
-                an 'IORef'; before the 'IORef' is written to, it contains "bottom" (an
+                an 'IORef'; before the 'IORef' is written to, it contains _|_ (an
                 exception with a descriptive error message) so that an error is raised
                 in the user code if the variable is accidently accessed before the
                 value is ready.
