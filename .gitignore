@@ -6,3 +6,16 @@ dist/build/autogen/cabal_macros.h
 dist/build/libHSprocrastinating-variable-1.0.a
 dist/installed-pkg-config
 dist/setup-config
+dist/doc/html/procrastinating-variable/Data-PVar.html
+dist/doc/html/procrastinating-variable/doc-index.html
+dist/doc/html/procrastinating-variable/frames.html
+dist/doc/html/procrastinating-variable/haddock-util.js
+dist/doc/html/procrastinating-variable/haddock.css
+dist/doc/html/procrastinating-variable/haskell_icon.gif
+dist/doc/html/procrastinating-variable/index-frames.html
+dist/doc/html/procrastinating-variable/index.html
+dist/doc/html/procrastinating-variable/mini_Data-PVar.html
+dist/doc/html/procrastinating-variable/minus.gif
+dist/doc/html/procrastinating-variable/plus.gif
+dist/doc/html/procrastinating-variable/procrastinating-variable.haddock
+dist/procrastinating-variable-1.0.tar.gz
